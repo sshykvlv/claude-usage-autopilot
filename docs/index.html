@@ -20,14 +20,14 @@
   .wrap { max-width:780px; margin:0 auto; padding:0 20px; }
   header { padding:72px 0 40px; text-align:center; }
   h1 { font-family:var(--mono); font-size:clamp(1.15rem, 4.8vw, 1.7rem); font-weight:600; line-height:1.5; margin-bottom:14px; letter-spacing:-.01em; text-align:center; }
-  h1 .l1 { color:var(--dim); display:block; }
+  h1 .l1 { color:#fff; display:block; }
   h1 .l2 { color:#fff; display:block; }
   /* the rotating word lives on its own block-level line: text-align:center then
      centers it as the ONLY content there, so it can grow/shrink freely without
      ever pushing neighboring text — no width math, no nowrap edge cases needed. */
   h1 .l3 { display:block; }
   h1 .accent { font-family:"Instrument Serif",Georgia,serif; font-style:italic; font-weight:400; color:var(--accent); font-size:1.2em; letter-spacing:0; }
-  #rotate-word { border-right:.1em solid var(--accent); }
+  #rotate-word { border-right:.04em solid var(--accent); }
   @media (prefers-reduced-motion: reduce) { #rotate-word { border-right:none; } }
   .sub { color:var(--dim); font-size:1.15rem; max-width:600px; margin:0 auto 28px; }
   .btns a { display:inline-block; margin:6px; padding:10px 22px; border-radius:8px; text-decoration:none; font-weight:600; }
@@ -54,7 +54,7 @@
 <div class="wrap">
 
 <header>
-  <h1><span class="l1">Every Claude usage tracker tells you how much you burned.</span><span class="l2">This one makes sure you</span><span class="l3"><span class="accent" id="rotate-word">last the week</span>.</span></h1>
+  <h1><span class="l1">Every Claude usage tracker tells you how much you burned.</span><span class="l2">This one makes sure you</span><span class="l3"><span class="accent" id="rotate-word">last the week</span></span></h1>
   <p class="sub">A free, open-source <strong>Claude usage tracker on autopilot</strong>: it watches your Claude Code usage limits, projects your weekly burn — and switches to economy mode automatically before you hit the wall.</p>
   <div class="btns">
     <a class="primary" href="https://github.com/sshykvlv/claude-usage-autopilot">Get it on GitHub</a>
