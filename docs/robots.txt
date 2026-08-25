@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sshykvlv.github.io/claude-usage-autopilot/sitemap.xml
