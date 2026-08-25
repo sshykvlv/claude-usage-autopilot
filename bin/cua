@@ -1,0 +1,46 @@
+#!/bin/zsh
+# cua — claude-usage-autopilot CLI
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+ROOT="${0:A:h:h}"
+CUA_CFG_DIR="${CUA_CFG_DIR:-$HOME/.config/claude-usage-autopilot}"
+CUA_CACHE="${CUA_CACHE:-$HOME/.cache/claude-usage-autopilot}"
+CFG="$CUA_CFG_DIR/config.json"
+SETTINGS="${CUA_SETTINGS:-$HOME/.claude/settings.json}"
+
+case "${1:-status}" in
+  status)
+    zsh "$ROOT/lib/quota-engine.sh"
+    [[ -f $CUA_CACHE/mode.json ]] && echo "Eco-mode: ACTIVE (auto) — cua eco off to disengage"
+    ;;
+  history)
+    tail -n "${2:-20}" "$CUA_CACHE/history.jsonl" 2>/dev/null | jq -r '[(.ts|strftime("%d.%m %H:%M")), .band, "w\(.week // "?")%", "5h\(.session // "?")%"] | @tsv' 2>/dev/null \
+      || echo "no history yet (the watch agent writes one line per 30 min)"
+    ;;
+  eco)
+    case "${2:-status}" in
+      status) [[ -f $CUA_CACHE/mode.json ]] && { echo "eco: ACTIVE"; jq . "$CUA_CACHE/mode.json"; } || echo "eco: off" ;;
+      off)
+        if [[ -f $CUA_CACHE/mode.json ]]; then
+          prev=$(jq -r '.prev_model // empty' "$CUA_CACHE/mode.json")
+          rm -f "$CUA_CACHE/mode.json"
+          echo "eco disengaged. Model in settings.json left as-is — restore manually if wanted${prev:+ (was: $prev)}."
+        else echo "eco is not active"; fi ;;
+      on)
+        eco_model=$(jq -r '.eco.eco_model // "sonnet"' "$CFG" 2>/dev/null)
+        jq -n --arg pm "$(jq -r '.model // empty' "$SETTINGS" 2>/dev/null)" --arg em "$eco_model" \
+          '{band:"MANUAL", prev_model:(if $pm=="" or $pm==$em then null else $pm end), settings_hash:null, entered_at:(now|floor), week_resets:0, overdue_at:0}' > "$CUA_CACHE/mode.json"
+        echo "eco engaged manually. New sessions get the eco directive; set /model $eco_model yourself or wait for the watch tick." ;;
+      *) echo "usage: cua eco [status|on|off]" ;;
+    esac
+    ;;
+  tick)  zsh "$ROOT/lib/watch.sh" && echo "tick done"; cat "$CUA_CACHE/snapshot.txt" 2>/dev/null ;;
+  doctor)
+    for f in "$CFG" "$CUA_CACHE/state.json" "$CUA_CACHE/snapshot.txt"; do
+      [[ -f $f ]] && echo "ok:      $f ($(( ($(date +%s) - $(stat -f %m "$f")) / 60 )) min old)" || echo "missing: $f"
+    done
+    launchctl list 2>/dev/null | grep -q claude-usage-autopilot && echo "ok:      launchd agent loaded" || echo "missing: launchd agent (re-run install.sh)"
+    security find-generic-password -s "Claude Code-credentials" >/dev/null 2>&1 && echo "ok:      Claude Code Keychain credentials" || echo "missing: Claude Code login (run claude, then /login)"
+    ;;
+  uninstall) exec zsh "$ROOT/uninstall.sh" ;;
+  *) echo "usage: cua [status|history [n]|eco on|off|status|tick|doctor|uninstall]" ;;
+esac

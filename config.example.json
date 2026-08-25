@@ -1,0 +1,7 @@
+{
+  "eco": { "enabled": true, "eco_model": "sonnet" },
+  "codex_homes": [],
+  "notify": { "macos": true, "telegram_bot_token": "", "telegram_chat_id": "" },
+  "thresholds": { "selective_pace": 1.2, "conservation_pace": 1.5, "conservation_week": 70 },
+  "wrap_command": ""
+}

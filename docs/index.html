@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Usage Tracker on Autopilot — pace your Claude Code weekly limits</title>
+<meta name="description" content="Free open-source Claude usage tracker that does more than track: it paces your Claude Code usage limits, projects your weekly quota burn, and switches to economy mode automatically before you hit the wall.">
+<meta property="og:title" content="Claude Usage Tracker on Autopilot">
+<meta property="og:description" content="Paces your Claude Code weekly limits and engages eco-mode automatically. Free, open source, local-only.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛩️</text></svg>">
+<style>
+  :root { --bg:#0d1117; --panel:#161b22; --border:#30363d; --text:#e6edf3; --dim:#8b949e;
+          --green:#3fb950; --yellow:#d29922; --orange:#f0883e; --red:#f85149; --accent:#58a6ff; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+  .wrap { max-width:780px; margin:0 auto; padding:0 20px; }
+  header { padding:72px 0 40px; text-align:center; }
+  h1 { font-size:2.1rem; line-height:1.25; margin-bottom:14px; }
+  .sub { color:var(--dim); font-size:1.15rem; max-width:600px; margin:0 auto 28px; }
+  .btns a { display:inline-block; margin:6px; padding:10px 22px; border-radius:8px; text-decoration:none; font-weight:600; }
+  .primary { background:var(--accent); color:#0d1117; }
+  .ghost { border:1px solid var(--border); color:var(--text); }
+  .term { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px 20px;
+          font:14px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace; overflow-x:auto; margin:26px 0; text-align:left; white-space:pre; }
+  .g{color:var(--green)} .y{color:var(--yellow)} .o{color:var(--orange)} .r{color:var(--red)} .d{color:var(--dim)} .b{color:var(--accent)}
+  section { padding:34px 0; border-top:1px solid var(--border); }
+  h2 { font-size:1.4rem; margin-bottom:16px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; }
+  .card { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:16px; }
+  .card b { display:block; margin-bottom:6px; }
+  .card p { color:var(--dim); font-size:.95rem; }
+  table { width:100%; border-collapse:collapse; font-size:.95rem; }
+  td,th { padding:8px 10px; border-bottom:1px solid var(--border); text-align:left; }
+  code { background:var(--panel); border:1px solid var(--border); border-radius:5px; padding:1px 6px; font-size:.9em; }
+  .note { color:var(--dim); font-size:.9rem; margin-top:12px; }
+  footer { padding:40px 0 60px; color:var(--dim); font-size:.9rem; text-align:center; }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Every Claude usage tracker tells you how much you burned.<br>This one makes sure you last the week.</h1>
+  <p class="sub">A free, open-source <strong>Claude usage tracker on autopilot</strong>: it watches your Claude Code usage limits, projects your weekly burn — and switches to economy mode automatically before you hit the wall.</p>
+  <div class="btns">
+    <a class="primary" href="https://github.com/sshykvlv/claude-usage-autopilot">Get it on GitHub</a>
+    <a class="ghost" href="#install">Install in 30s</a>
+  </div>
+  <div class="term">$ cua status
+<span class="d">=== claude-usage-autopilot snapshot 09:42 (server truth) ===</span>
+Claude:   5h 6% · week 32% · Opus 34% <span class="d">(week resets 2026-08-31)</span>
+Pace:     <span class="o">2.4x burn</span> · 32% used in 14% of the week · <span class="r">~235% by reset</span> (6.0d left)
+Band:     <span class="o">SELECTIVE</span> — pace 2.4x early in week
+
+<span class="d"># …and in your Claude Code statusline, always:</span>
+<span class="d">Opus │ my-project ███░░░░░░░ 34%</span> <span class="d">h6%</span> <span class="o">w32%</span></div>
+</header>
+
+<section>
+  <h2>Why pace, not usage</h2>
+  <p><code>37% used</code> means nothing by itself. 37% on day one is an emergency; 37% on day six is comfortable. The autopilot compares the fraction of budget burned against the fraction of the week elapsed and turns it into a verdict:</p>
+  <div style="margin-top:14px">
+  <table>
+    <tr><th>Band</th><th>What happens</th></tr>
+    <tr><td><span class="g">OK / WATCH</span></td><td>on track — nothing shown, nothing done</td></tr>
+    <tr><td><span class="o">SELECTIVE</span></td><td>burning fast — your sessions are advised to conserve &amp; delegate</td></tr>
+    <tr><td><span class="r">CONSERVATION</span></td><td>won't make the reset — <b>eco-mode engages automatically</b></td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>What it does</h2>
+  <div class="grid">
+    <div class="card"><b>📟 Statusline</b><p><code>h6% w32%</code> — 5-hour and weekly usage always visible, color is the verdict. 10 characters, quarter-screen friendly.</p></div>
+    <div class="card"><b>🔻 Autonomous eco-mode</b><p>When the pace says you won't make the reset, new sessions switch to a cheaper model — and switch back after the weekly reset. Guarded, reversible, notified.</p></div>
+    <div class="card"><b>🧭 In-session alerts</b><p>Your Claude sessions get told when the budget is red, auth broke, or monitoring went stale — so the model itself starts conserving.</p></div>
+    <div class="card"><b>📈 Burn history</b><p>One line every 30 minutes. <code>cua history</code> shows the trend that explains where your week went.</p></div>
+    <div class="card"><b>⚙️ Grind detector</b><p>Dozens of edits on an expensive model? One polite suggestion to downshift — plus a <code>GRIND</code> token in the statusline.</p></div>
+    <div class="card"><b>🔌 Codex too</b><p>Optionally tracks OpenAI Codex CLI accounts next to Claude, from local telemetry.</p></div>
+  </div>
+</section>
+
+<section id="install">
+  <h2>Install</h2>
+  <p>macOS · <a href="https://claude.com/claude-code">Claude Code</a> · <code>jq</code></p>
+  <div class="term">git clone https://github.com/sshykvlv/claude-usage-autopilot.git
+cd claude-usage-autopilot && ./install.sh</div>
+  <p>No API keys, no accounts, no telemetry: it reads your own usage percentages via your existing Claude Code login and keeps everything in local files. Uninstall reverts every change: <code>cua uninstall</code>.</p>
+  <p class="note">Not affiliated with Anthropic. "Claude" is used descriptively; the usage endpoint is the same one the Claude Code UI uses and may change.</p>
+</section>
+
+<section>
+  <h2>Safety model</h2>
+  <p>Automatically editing someone's model config is dangerous, so every transition is guarded: a flip never happens on a single reading, your manual edits always win over the automation (checksum-verified), racing with <code>/model</code> is detected, and stale data never triggers anything. Each guard exists because it caught a real failure during development.</p>
+</section>
+
+<section>
+  <h2>Roadmap</h2>
+  <p>Linux support · Claude Code plugin packaging · <b>Pro</b>: cloud sync across machines, web dashboard, team quotas. Want Pro? <a href="https://github.com/sshykvlv/claude-usage-autopilot/issues/1">Leave a 👍 here</a> — it ships when enough hands go up.</p>
+</section>
+
+<footer>
+  MIT · <a href="https://github.com/sshykvlv/claude-usage-autopilot">github.com/sshykvlv/claude-usage-autopilot</a>
+</footer>
+</div>
+</body>
+</html>
