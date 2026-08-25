@@ -54,6 +54,16 @@ cua doctor        # is everything wired up
 
 Most of the time you run nothing: the launchd agent ticks every 30 minutes, the statusline shows the state, and notifications arrive only when something needs you.
 
+## Tracking OpenAI Codex CLI accounts too
+
+Claude is tracked automatically — no setup. Codex is opt-in and manual: it does **not** scan your machine for logins, because a Codex account is just a directory (`CODEX_HOME`), and there's no reliable way to auto-discover which ones you actually use. Add each account's path to `codex_homes` in `~/.config/claude-usage-autopilot/config.json`:
+
+```json
+{ "codex_homes": ["~/.codex", "~/.codex-work"] }
+```
+
+Each entry is read from that account's local session telemetry (`~/.codex*/sessions/**/rollout-*.jsonl`) — no network calls, no new credentials. Only Codex CLI is supported today; other providers (Gemini CLI, etc.) aren't wired up.
+
 ## Autonomous eco-mode — the guards
 
 Flipping someone's model config automatically is dangerous, so every transition is guarded (each guard exists because it caught a real failure during development):
