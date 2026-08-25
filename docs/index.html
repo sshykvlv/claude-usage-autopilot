@@ -23,7 +23,7 @@
   h1 .l1 { color:var(--dim); display:block; }
   h1 .l2 { color:#fff; display:block; }
   h1 .accent { font-family:"Instrument Serif",Georgia,serif; font-style:italic; font-weight:400; color:var(--accent); font-size:1.2em; letter-spacing:0; }
-  #rotate-word { border-right:.1em solid var(--accent); }
+  #rotate-word { display:inline-block; text-align:left; border-right:.1em solid var(--accent); vertical-align:top; }
   @media (prefers-reduced-motion: reduce) { #rotate-word { border-right:none; } }
   .sub { color:var(--dim); font-size:1.15rem; max-width:600px; margin:0 auto 28px; }
   .btns a { display:inline-block; margin:6px; padding:10px 22px; border-radius:8px; text-decoration:none; font-weight:600; }
@@ -119,6 +119,16 @@ cd claude-usage-autopilot && ./install.sh</div>
   var el = document.getElementById('rotate-word');
   if (!el) return;
   var words = ['last the week', 'survive Monday', 'make the reset'];
+  // measure the widest word first so the box never resizes mid-animation — a
+  // shrinking/growing span pushes the trailing "." and re-centers the whole
+  // line every keystroke, which is the exact jitter being fixed here.
+  var probe = el.cloneNode(false);
+  probe.style.cssText = 'position:absolute; visibility:hidden; white-space:nowrap; display:inline-block; border:0;';
+  document.body.appendChild(probe);
+  var maxW = 0;
+  words.forEach(function(w){ probe.textContent = w; maxW = Math.max(maxW, probe.offsetWidth); });
+  document.body.removeChild(probe);
+  el.style.width = maxW + 'px';
   var wi = 0, ci = words[0].length, deleting = true, pause = 900;
   function tick(){
     var w = words[wi];
